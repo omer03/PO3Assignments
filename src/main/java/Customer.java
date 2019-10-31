@@ -21,6 +21,7 @@ public class Customer {
         this.queuedAt = queuedAt;
         this.zipCode = zipCode;
         // TODO: initialize an empty set of purchased items
+        this.items = new HashSet<>();
     }
 
     /**

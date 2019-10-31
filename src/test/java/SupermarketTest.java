@@ -134,4 +134,13 @@ class SupermarketTest {
                 cashier2.getMaxQueueLength());
     }
 
+    @Test
+    void testPrintCustomerStatistics() {
+        supermarket1.printCustomerStatistics();
+    }
+
+    @Test
+    void testPrintSimulationResults() {
+        supermarket1.printSimulationResults();
+    }
 }

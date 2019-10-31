@@ -24,6 +24,8 @@ public class Supermarket {
         this.setClosingTime(closingTime);
         this.cashiers = new ArrayList<>();
         // TODO create empty data structures for products and customers
+        this.products = new HashSet<>();
+        this.customers = new ArrayList<>();
     }
 
     public int getTotalNumberOfItems() {
@@ -67,6 +69,7 @@ public class Supermarket {
 
         System.out.printf("\nSimulation scenario results:\n");
         System.out.printf("Cashiers:     n-customers:  avg-wait-time: max-wait-time: max-queue-length: avg-check-out-time: idle-time:\n");
+        System.out.println();
         // TODO: report simulation results per cashier:
         //  a) number of customers
         //  b) average waiting time per customer
