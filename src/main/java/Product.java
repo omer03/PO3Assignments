@@ -8,6 +8,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 public class Product {
@@ -23,6 +24,25 @@ public class Product {
 
     // TODO implement relevant overrides and/or local classes to be able to
     //  print Products and/or use them in sets, maps and/or priority queues.
+
+    @Override
+    public int hashCode() {
+        // Product objects are hashed with their code. So similar codes produce same hash.
+        return Objects.hash(code);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        // Standard code for overriding equals method.
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Product other = (Product) obj;
+        return code.equals(other.code); // We only check if code is equal to see if products are the same.
+    }
 
     public String getCode() {
         return code;
