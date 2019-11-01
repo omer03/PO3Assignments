@@ -22,7 +22,15 @@ public class Purchase {
     }
 
     // TODO implement relevant overrides and/or local classes to be able to
-    //  print Purchases and/or use them in sets, maps and/or priority queues.
+    //  print Purchases and/or use them in sets, maps and/or priority queues. (Complete?)
+
+    @Override
+    public String toString() {
+        return "Purchase{" +
+                "product=" + product +
+                ", amount=" + amount +
+                '}';
+    }
 
     public Product getProduct() {
         return product;

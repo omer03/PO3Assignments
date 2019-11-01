@@ -6,12 +6,9 @@
 import utils.XMLParser;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
-public class Product {
+public class Product implements Comparable<Product> {
     private String code;            // a unique product code; identical codes designate identical products
     private String description;     // the product description, useful for reporting
     private double price;           // the product's price
@@ -23,14 +20,25 @@ public class Product {
     }
 
     // TODO implement relevant overrides and/or local classes to be able to
-    //  print Products and/or use them in sets, maps and/or priority queues.
+    //  print Products and/or use them in sets, maps and/or priority queues. (Complete)
 
+    /**
+     * This overridden method produces a hashcode based on the code of the product.
+     *
+     * @return The hashcode of the product.
+     */
     @Override
     public int hashCode() {
         // Product objects are hashed with their code. So similar codes produce same hash.
         return Objects.hash(code);
     }
 
+    /**
+     *  This overridden method checks if two products are equal. Two products are equal if they have the same code.
+     *
+     * @param obj The object to be compared.
+     * @return Whether the two objects are the same.
+     */
     @Override
     public boolean equals(Object obj) {
         // Standard code for overriding equals method.
@@ -54,6 +62,15 @@ public class Product {
 
     public double getPrice() {
         return price;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "code='" + code + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                '}';
     }
 
     /**
@@ -111,5 +128,18 @@ public class Product {
         xmlWriter.writeAttribute("description", this.description);
         xmlWriter.writeAttribute("price", String.format(Locale.US, "%.2f", this.price));
         xmlWriter.writeEndElement();
+    }
+
+    /**
+     * This method compares the current Product with the next Product.
+     * It compares products based on 1 attribute: code
+     *
+     * @param p The product to be compared
+     * @return A negative integer, zero or a positive integer as this product
+     * is less than, equal to, or greater than the supplied product object.
+     */
+    @Override
+    public int compareTo(Product p) {
+        return this.code.compareTo(p.code);
     }
 }

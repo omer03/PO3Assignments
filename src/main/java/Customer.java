@@ -20,7 +20,7 @@ public class Customer {
     public Customer(LocalTime queuedAt, String zipCode) {
         this.queuedAt = queuedAt;
         this.zipCode = zipCode;
-        // TODO: initialize an empty set of purchased items
+        // TODO: initialize an empty set of purchased items (Complete)
         this.items = new HashSet<>();
     }
 
@@ -31,7 +31,14 @@ public class Customer {
     public int getNumberOfItems() {
         int numItems = 0;
 
-        // TODO: Calculate the total number of items
+        // TODO: Calculate the total number of items (Complete)
+        // Creating an iterator to iterate over the set of purchases.
+        Iterator<Purchase> itr = this.items.iterator();
+
+        // Looping through the iterator and adding the amount of products.
+        while(itr.hasNext()){
+            numItems += itr.next().getAmount();
+        }
 
         return numItems;
     }
@@ -40,6 +47,16 @@ public class Customer {
         double totalBill = 0.0;
 
         // TODO: Calculate the total cost of all items
+        // Creating an iterator to iterate over the set of purchases.
+        Iterator<Purchase> itr = this.items.iterator();
+
+        // Looping through the iterator and adding to the total of the bill.
+        while(itr.hasNext()){
+            Purchase p = itr.next();
+            double price = p.getProduct().getPrice();
+            int amount = p.getAmount();
+            totalBill += (price * amount);
+        }
 
         return totalBill;
     }
