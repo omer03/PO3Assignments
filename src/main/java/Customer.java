@@ -32,12 +32,9 @@ public class Customer {
         int numItems = 0;
 
         // TODO: Calculate the total number of items (Complete)
-        // Creating an iterator to iterate over the set of purchases.
-        Iterator<Purchase> itr = this.items.iterator();
-
-        // Looping through the iterator and adding the amount of products.
-        while(itr.hasNext()){
-            numItems += itr.next().getAmount();
+        // Looping through the set of purchases to add the amount.
+        for (Purchase item : items) {
+            numItems += item.getAmount();
         }
 
         return numItems;
