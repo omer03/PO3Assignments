@@ -32,6 +32,10 @@ public class Supermarket {
         int totalItems = 0;
 
         // TODO: calculate the total number of shopped items
+        // Loop through all customers and add the total products purchased.
+        for (Customer customer : customers) {
+            totalItems += customer.getNumberOfItems();
+        }
 
         return totalItems;
     }
@@ -90,10 +94,14 @@ public class Supermarket {
      * @return
      */
     public Map<String, Double> revenueByZipCode() {
-        Map<String, Double> revenues = null;
+        Map<String, Double> revenues = new TreeMap<>();
 
         // TODO create an appropriate data structure for the revenues
         //  and calculate its contents
+        // Loop through customer set and add the total bill of each customer.
+        for (Customer customer : customers) {
+            revenues.put(customer.getZipCode(), revenues.getOrDefault(customer.getZipCode(), 0.0) + customer.calculateTotalBill());
+        }
 
         return revenues;
     }
