@@ -66,11 +66,7 @@ public class Product implements Comparable<Product> {
 
     @Override
     public String toString() {
-        return "Product{" +
-                "code='" + code + '\'' +
-                ", description='" + description + '\'' +
-                ", price=" + price +
-                '}';
+        return description;
     }
 
     /**
