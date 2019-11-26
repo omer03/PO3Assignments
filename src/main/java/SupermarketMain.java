@@ -11,7 +11,7 @@ public class SupermarketMain {
         supermarket.getCashiers().clear();
         // TODO Add a FIFO cashiers
         //  (uncomment these lines once the FIFOCashier class has been implemented)
-        //supermarket.getCashiers().add(new FIFOCashier("FIFO"));
+        supermarket.getCashiers().add(new FIFOCashier("FIFO"));
 
         // simulate the configuration and print the result
         supermarket.simulateCashiers();

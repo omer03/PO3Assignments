@@ -43,7 +43,6 @@ public class Customer {
     public double calculateTotalBill() {
         double totalBill = 0.0;
 
-        // TODO: Calculate the total cost of all items
         // Creating an iterator to iterate over the set of purchases.
         Iterator<Purchase> itr = this.items.iterator();
 

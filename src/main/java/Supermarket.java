@@ -117,10 +117,14 @@ public class Supermarket {
      * simulate the cashiers while handling all customers that enter their queues
      */
     public void simulateCashiers() {
-        Queue<Customer> shoppingQueue = null;
+        Queue<Customer> shoppingQueue = new LinkedList<Customer>();
 
         // TODO: create an appropriate data structure for the shoppingQueue
         //  and add all customers in the supermarket
+
+        for (Customer cust : this.customers) {
+            shoppingQueue.add(cust);
+        }
 
         // all cashiers restart at open time
         for (Cashier c : this.cashiers) {
@@ -131,7 +135,7 @@ public class Supermarket {
         // and redirect them to the cashier of their choice
 
         // TODO: get the first customer from the shoppingQueue;
-        Customer nextCustomer = null;
+        Customer nextCustomer = shoppingQueue.peek();
 
         while (nextCustomer != null) {
 
