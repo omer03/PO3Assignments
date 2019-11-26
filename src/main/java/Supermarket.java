@@ -32,6 +32,10 @@ public class Supermarket {
         int totalItems = 0;
 
         // TODO: calculate the total number of shopped items
+        // Loop through all customers and add the total products purchased.
+        for (Customer customer : customers) {
+            totalItems += customer.getNumberOfItems();
+        }
 
         return totalItems;
     }
@@ -54,10 +58,15 @@ public class Supermarket {
         System.out.printf("Revenues and most bought product per zip-code:");
         Map<String, Double> revenues = this.revenueByZipCode();
         Map<String, Product> populars = this.mostBoughtProductByZipCode();
+        System.out.printf("\n%s\n%s", revenues.entrySet(), populars.entrySet());
 
         double totalRevenue = 0.0;
         // TODO: display the calculated revenues and most bought products.
         // TODO: calculate the total revenue.
+        // Loop through the revenues map and add all total revenues.
+        for (Map.Entry<String, Double> entry : revenues.entrySet()) {
+            totalRevenue += entry.getValue();
+        }
 
         System.out.printf("\nTotal Revenue=%.2f\n", totalRevenue);
     }
@@ -90,10 +99,14 @@ public class Supermarket {
      * @return
      */
     public Map<String, Double> revenueByZipCode() {
-        Map<String, Double> revenues = null;
+        Map<String, Double> revenues = new TreeMap<>();
 
         // TODO create an appropriate data structure for the revenues
         //  and calculate its contents
+        // Loop through customer list and add the total bill of each customer.
+        for (Customer customer : customers) {
+            revenues.put(customer.getZipCode(), revenues.getOrDefault(customer.getZipCode(), 0.0) + customer.calculateTotalBill());
+        }
 
         return revenues;
     }
@@ -105,11 +118,23 @@ public class Supermarket {
      * @return
      */
     public Map<String, Product> mostBoughtProductByZipCode() {
-        Map<String, Product> mostBought = null;
+        Map<String, Product> mostBought = new TreeMap<>();
+        Purchase mostBoughtProduct = null;
 
         // TODO create an appropriate data structure for the mostBought
         //  and calculate its contents
+        // Loop through customer list and save the current most bought product.
+        for (Customer customer : customers) {
+            // Loop through all purchased items of a customer.
+            for (Purchase item : customer.getItems()) {
+                // It only counts the first product with the highest amount so I don't need additional checks.
+                if (mostBoughtProduct == null || item.getAmount() > mostBoughtProduct.getAmount()) {
+                    mostBought.put(customer.getZipCode(), item.getProduct());
+                    mostBoughtProduct = item;
+                }
+            }
 
+        }
         return mostBought;
     }
 
