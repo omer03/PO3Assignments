@@ -3,8 +3,13 @@ import java.util.*;
 
 public class FIFOCashier extends Cashier {
 
+    public int checkoutTimePerCustomer;
+    public int checkoutTimePerItem;
+
     public FIFOCashier(String name) {
         super(name);
+        this.checkoutTimePerCustomer = 20;
+        this.checkoutTimePerItem = 2;
     }
 
     /**
@@ -16,14 +21,11 @@ public class FIFOCashier extends Cashier {
      */
     @Override
     public int expectedCheckOutTime(int numberOfItems) {
-        int checkOutTime = 20;
-        int secondsPerBoughtItem = 2;
-
         if (numberOfItems == 0) {
             return 0;
         }
 
-        return checkOutTime + (numberOfItems * secondsPerBoughtItem);
+        return checkoutTimePerCustomer + (numberOfItems * checkoutTimePerItem);
     }
 
     /**
