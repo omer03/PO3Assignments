@@ -9,7 +9,7 @@ import javax.xml.stream.XMLStreamWriter;
 import java.time.LocalTime;
 import java.util.*;
 
-public class Customer {
+public class Customer implements Comparable<Customer> {
     private LocalTime queuedAt;      // time of arrival at cashier
     private String zipCode;          // zip-code of the customer
     private Set<Purchase> items;     // items procured by customer
@@ -189,5 +189,16 @@ public class Customer {
             }
         }
         xmlWriter.writeEndElement();
+    }
+
+    @Override
+    public int compareTo(Customer o) {
+        if (this.getQueuedAt().isBefore(o.queuedAt)) {
+            return -1;
+        } else if (this.getQueuedAt().isAfter(o.queuedAt)) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }
