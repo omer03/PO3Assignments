@@ -111,10 +111,6 @@ public abstract class Cashier {
         return totalCheckoutTime / amountOfServedCustomers;
     }
 
-//    public void addCheckoutTime(double customerCheckoutTime) {
-//        totalCheckoutTime += customerCheckoutTime;
-//    }
-
     public double getMaxWaitingTime() {
         return maxWaitingTime;
     }
