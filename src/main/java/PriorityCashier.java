@@ -1,10 +1,8 @@
-import java.util.Comparator;
-import java.util.PriorityQueue;
-
 public class PriorityCashier extends FIFOCashier {
-    private int maxPriorityItems;
 
-    public PriorityCashier(String name, int maxPriority) {
+    private int maxPriorityItems; // the limit to where you can go first in the PriorityCashier waitingQueue
+
+    public PriorityCashier(String name, int maxPriorityItems) {
         super(name);
         this.maxPriorityItems = maxPriorityItems;
         //waitingQueue = new PriorityQueue<>(new PriorityComparator(maxPriorityItems));
@@ -12,23 +10,19 @@ public class PriorityCashier extends FIFOCashier {
 
     @Override
     public int expectedWaitingTime(Customer customer) {
-        int wt = 12; // de tijd die we de huidige klant nog moeten helpen // to change
-        for (Customer cust : waitingQueue) {
-            if (customer.getNumberOfItems() <= 5) {
-                // groene klant
-                if (cust.getNumberOfItems() > 5) {
-                    break;
-                }
-            }
-            wt += expectedCheckOutTime(cust.getNumberOfItems());
+        int waitingTime = 0;
+
+        if (currentCustomer != null) {
+            waitingTime += remainingTimeHandlingPreviousCustomers;
         }
-        return wt;
-    }
 
-    @Override
-    public void add(Customer customer) {
-        this.waitingQueue.add(customer);
-    }
+        for (Customer queuedCustomer : waitingQueue) {
+            if (customer.getNumberOfItems() > maxPriorityItems || queuedCustomer.getNumberOfItems() <= maxPriorityItems) {
+                waitingTime += expectedCheckOutTime(queuedCustomer.getNumberOfItems());
+            }
+        }
 
+        return waitingTime;
+    }
 
 }

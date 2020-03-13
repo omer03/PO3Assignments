@@ -1,16 +1,19 @@
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayDeque;
 
 public class FIFOCashier extends Cashier {
 
     public int checkoutTimePerCustomer;
     public int checkoutTimePerItem;
 
-    public FIFOCashier(String name) {
+    public FIFOCashier (String name) {
         super(name);
-        this.checkoutTimePerCustomer = 20;
-        this.checkoutTimePerItem = 2;
+        waitingQueue = new ArrayDeque<>();
+        remainingTimeHandlingPreviousCustomers = 0;
     }
+
+    // The remaining seconds to handle the previous customer
+    protected int remainingTimeHandlingPreviousCustomers;
 
     /**
      * calculate the expected nett checkout time of a customer with a given number of items
@@ -41,11 +44,17 @@ public class FIFOCashier extends Cashier {
      */
     @Override
     public int expectedWaitingTime(Customer customer) {
-        int wt = 0;
-        for (Customer cust : waitingQueue) {
-            wt += expectedCheckOutTime(cust.getNumberOfItems());
+        int waitingTime = 0;
+
+        if (currentCustomer != null) {
+            waitingTime += remainingTimeHandlingPreviousCustomers;
         }
-        return wt;
+
+        for (Customer queuedCustomer : waitingQueue) {
+            waitingTime += expectedCheckOutTime(queuedCustomer.getNumberOfItems());
+        }
+
+        return waitingTime;
     }
 
 
@@ -59,42 +68,73 @@ public class FIFOCashier extends Cashier {
      * this work may involve:
      * a) continuing or finishing the current customer(s) begin served
      * b) serving new customers that are waiting on the queue
-     * c) sitting idle, taking a break until time has reached targetTime,
-     * after which new customers may arrive.
+     * c) sitting idle, taking a break until time has reached targetTime, after which new customers may arrive.
      *
      * @param targetTime
      */
     @Override
     public void doTheWorkUntil(LocalTime targetTime) {
-        maxQueueLength = waitingQueue.size();
-        int amountOfCustomersHandled = 0;
+        // Obtain the duration between previous customer arrival (If any, since the first time there is no previous) and new customer arrival:
+        final long durationBetweenCustomers = targetTime.toSecondOfDay() - currentTime.toSecondOfDay();
 
-        while (currentTime.isBefore(targetTime)) {
-            while (waitingQueue.isEmpty() && currentTime.isBefore(targetTime)) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) { // Sleep for 1 sec before executing next count
-                    e.printStackTrace();
+        // Check if there is a customer that is still being handled since this method is re-triggered once a new customer is queued to a cashier.
+        if (currentCustomer == null) {
+            // No current customer, so check if the queue contains a customer now (Since it  might be queued at a different cashier):
+            if (waitingQueue.size() > 0) {
+                // There is a customer in the queue so start handling it:
+                currentCustomer = waitingQueue.poll();
+
+                // Calculate the checkout time of current customer since there is no unfinished previous customer:
+                final int checkoutDurationSeconds = currentCustomer.getActualCheckOutTime();
+                // Calculate the LocalTime in seconds when this customer would have been handled:
+                final int checkoutSecondsOfDay = currentTime.toSecondOfDay() + checkoutDurationSeconds;
+                // Check if there is time enough to handle this customer:
+                final int arrivalTimeFutureCustomer = targetTime.toSecondOfDay();
+                if (checkoutSecondsOfDay <= arrivalTimeFutureCustomer) {
+                    // There was enough time to handle the current customer:
+                    // So this cashier will be idle for x amount OR can start handling the next customer
+                    // Handle that by recursion, since resetting the currentCustomer will ensure that either the next customer is handled, or the idle time is updated:
+                    // Update the currentTime since we handled this customer
+                    currentTime = currentTime.plusSeconds(checkoutDurationSeconds);
+                    currentCustomer = null;
+                    doTheWorkUntil(targetTime);
+                    return;
+                } else {
+                    // Next customer arrives before current Customer is handled (Might even be another customer in the queue, so all customers waiting times should be increased):
+                    // Obtain the exceeding duration in seconds that is required to finish this customer after targetTime
+                    remainingTimeHandlingPreviousCustomers = checkoutSecondsOfDay - arrivalTimeFutureCustomer;
+                    // Update waiting time of customers in the queue:
+                    for (Customer customer : waitingQueue) {
+                        customer.setActualWaitingTime(customer.getActualWaitingTime() + remainingTimeHandlingPreviousCustomers);
+                    }
                 }
-                totalIdleTime++; // count idle time of FIFOCashier
+
+                this.addWaitingTime(currentCustomer.getActualWaitingTime());
+                if(currentCustomer.getActualWaitingTime() > this.getMaxWaitingTime()){
+                    this.setMaxWaitingTime(currentCustomer.getActualWaitingTime());
+                }
+
+            } else {
+                // There is no (current)Customer that the Cashier can help, so the Cashier is idle until a new Customer joins the queue
+                setTotalIdleTime((int) (getTotalIdleTime() + durationBetweenCustomers));
             }
-
-            Customer customerBeingHandled = waitingQueue.peek();
-            customerBeingHandled.setActualCheckOutTime(expectedCheckOutTime(customerBeingHandled.getNumberOfItems()));
-
-            if (waitingQueue.size() > maxQueueLength) { maxQueueLength = waitingQueue.size(); }
-            waitingQueue.remove(customerBeingHandled);
-            amountOfCustomersHandled++;
+        } else {
+            // There is a customer that is unfinished so check if that can be finished now:
+            if (remainingTimeHandlingPreviousCustomers <= durationBetweenCustomers) {
+                // Increase the current time and let recursion handle the next Customer:
+                currentTime = currentTime.plusSeconds(remainingTimeHandlingPreviousCustomers);
+                currentCustomer = null;
+                // Finished the previous customer:
+                remainingTimeHandlingPreviousCustomers = 0;
+                // Start handling the next (if any)
+                doTheWorkUntil(targetTime);
+                return;
+            }
+            // Not enough time to handle the current customer, so handle it partially by decreasing the remaining time
+            remainingTimeHandlingPreviousCustomers -= durationBetweenCustomers;
         }
+        // Update the current time:
+        currentTime = targetTime;
     }
-
-    @Override
-    public void reStart(LocalTime currentTime) {
-        this.waitingQueue.clear();
-        this.currentTime = currentTime;
-        this.totalIdleTime = 0;
-        this.maxQueueLength = 0;
-    }
-
 
 }

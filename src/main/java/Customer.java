@@ -66,21 +66,21 @@ public class Customer {
      * @return
      */
     public Cashier selectCashier(List<Cashier> cashiers) {
-        Cashier selectedCashier = null;
 
-        if (cashiers.size() == 1) {
-            selectedCashier = cashiers.get(0);
-        } else {
-            selectedCashier = null;
+         Cashier selectedCashier = null;
+            int shortestWaitingTime = Integer.MAX_VALUE;
 
-            // TODO find the cashier with the lowest expected pass-through time.
-            //  passthrough time = waiting time + time to check-out my own bought items
-            //  waiting time = remaining time for the current customer +
-            //          check-out times of all other customers that will be in front of me in the cashier's queue
-
+            // Skip the first since that's the default
+            for (Cashier cashier : cashiers) {
+                final int waitingTimeAtCashier = cashier.expectedWaitingTime(this);
+                if (waitingTimeAtCashier < shortestWaitingTime) {
+                    selectedCashier = cashier;
+                    shortestWaitingTime = waitingTimeAtCashier;
+                }
+            }
+            return selectedCashier;
         }
-        return selectedCashier;
-    }
+
 
     // TODO implement relevant overrides and/or local classes to be able to
     //  print Customers and/or use them in sets, maps and/or priority queues.
