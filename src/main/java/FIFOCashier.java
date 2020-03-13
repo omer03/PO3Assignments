@@ -64,8 +64,8 @@ public class FIFOCashier extends Cashier {
     public void doTheWorkUntil(LocalTime targetTime) {
         // Obtain the duration between previous customer arrival (If any, since the first time there is no previous) and new customer arrival:
         final long durationBetweenCustomers = targetTime.toSecondOfDay() - currentTime.toSecondOfDay();
-
-        // Check if there is a customer that is still being handled since this method is re-triggered once a new customer is queued to a cashier.
+        
+        // Verify whether there is a customer that is being handled, since this method re-triggers when a new customer queues.
         if (currentCustomer == null) {
             // No current customer, so check if the queue contains a customer now (Since it  might be queued at a different cashier):
             if (waitingQueue.size() > 0) {
