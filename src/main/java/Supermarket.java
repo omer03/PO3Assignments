@@ -56,17 +56,30 @@ public class Supermarket {
                 this.customers.size(), this.getTotalNumberOfItems(), this.products.size());
 
         System.out.printf("Revenues and most bought product per zip-code:");
-        Map<String, Double> revenues = this.revenueByZipCode();
-        Map<String, Product> populars = this.mostBoughtProductByZipCode();
-        System.out.printf("\n%s\n%s", revenues.entrySet(), populars.entrySet());
+        Map<String, Double> revenues = revenueByZipCode();
+        Map<String, Product> populars = mostBoughtProductByZipCode();
+
+
+        //System.out.printf("\n%s\n%s", revenues.entrySet(), populars.entrySet());
 
         double totalRevenue = 0.0;
         // TODO: display the calculated revenues and most bought products.
         // TODO: calculate the total revenue.
         // Loop through the revenues map and add all total revenues.
-        for (Map.Entry<String, Double> entry : revenues.entrySet()) {
-            totalRevenue += entry.getValue();
+        int index = 0;
+        for (Map.Entry<String, Double> entry1 : revenues.entrySet()) {
+            System.out.print((index % 3 == 0) ? "\n\t" : ", ");
+            String key = entry1.getKey();
+            Double revenue = entry1.getValue();
+            Product product = populars.get(key);
+            System.out.printf("%s:%.2f(%s)", key, revenue, product);
+            totalRevenue += revenue;
+            index++;
         }
+
+//        for (Map.Entry<String, Double> entry : revenues.entrySet()) {
+//            totalRevenue += entry.getValue();
+//        }
 
         System.out.printf("\nTotal Revenue=%.2f\n", totalRevenue);
     }
