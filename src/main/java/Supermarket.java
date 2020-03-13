@@ -18,6 +18,12 @@ public class Supermarket {
     private LocalTime openTime;         // start time of the simulation
     private LocalTime closingTime;      // end time of the simulation
 
+    private double overallAverageWaitingTime;
+    private double overallMaxWaitingTime;
+    private double overallAverageCheckoutTime;
+    private int overallIdleTime;
+    private int overallQueueLength;
+
     public Supermarket(String name, LocalTime openTime, LocalTime closingTime) {
         this.name = name;
         this.setOpenTime(openTime);
@@ -92,19 +98,38 @@ public class Supermarket {
         System.out.printf("\nSimulation scenario results:\n");
         System.out.printf("Cashiers:     n-customers:  avg-wait-time: max-wait-time: max-queue-length: avg-check-out-time: idle-time:\n");
         System.out.println();
-        // TODO: report simulation results per cashier:
-        //  a) number of customers
-        //  b) average waiting time per customer
-        //  c) maximum waiting time by any customer at the given cashier
-        //  d) maximum queue length of waiting customers including the customer being served
-        //  e) average check-out time of customers at the given cashier
-        //  f) total idle time of the cashier
-        //     (a self-service area is idle already if at least one terminal is idle)
 
+        // DONE: report simulation results per cashier:
+        for (Cashier cashier : cashiers) {
+            String name = cashier.getName();
+            int numberOfCustomers = cashier.getAmountOfServedCustomers();       //  a) number of customers
+            double averageWaitingTime = cashier.getAverageWaitingTime();        //  b) average waiting time per customer
+            double maxWaitingTime = cashier.getMaxWaitingTime();                   //  c) maximum waiting time by any customer at the given cashier
+            int maxQueueLength = cashier.getMaxQueueLength();                   //  d) maximum queue length of waiting customers including the customer being served
+            double averageCheckoutTime = cashier.getAverageCheckOutTime();      //  e) average check-out time of customers at the given cashier
+            int totalIdleTime = cashier.totalIdleTime;                          //  f) total idle time of the cashier
 
-        // TODO: report the same overall simulation results across all cashiers
+            // DONE: report the same overall simulation results across all cashiers
+            // as customer weighted averages or sums of totals.
+
+            System.out.printf("%s:\t\t\t\t%d\t\t\t%.2f\t\t\t%.2f\t\t\t%d\t\t\t\t%.2f\t\t\t%d%n", name, numberOfCustomers, averageWaitingTime, maxWaitingTime,
+                    maxQueueLength, averageCheckoutTime, totalIdleTime);
+
+            this.overallAverageWaitingTime += averageWaitingTime;
+            this.overallAverageCheckoutTime += averageCheckoutTime;
+            this.overallIdleTime += totalIdleTime;
+            if (this.overallQueueLength < maxQueueLength) {
+                overallQueueLength = maxQueueLength;
+            }
+            if (this.overallMaxWaitingTime < maxWaitingTime) {
+                overallMaxWaitingTime = maxWaitingTime;
+            }
+        }
+        // Done: report the same overall simulation results across all cashiers
         //  as customer weighted averages or sums of totals.
-
+        System.out.printf("Overall:\t\t\t%d\t\t\t%.2f\t\t\t%.2f\t\t\t%d\t\t\t\t%.2f\t\t\t%d%n", customers.size(), overallAverageWaitingTime / cashiers.size(),
+                overallMaxWaitingTime, overallQueueLength, overallAverageCheckoutTime / cashiers.size(), overallIdleTime);
+        resetOverallTimes();
     }
 
     /**
@@ -125,7 +150,6 @@ public class Supermarket {
     }
 
     /**
-     * (DIFFICULT!!!)
      * calculates a map of most bought products per zip code that is also ordered by zip code
      * if multiple products have the same maximum count, just pick one.
      * @return
@@ -155,14 +179,8 @@ public class Supermarket {
      * simulate the cashiers while handling all customers that enter their queues
      */
     public void simulateCashiers() {
-        Queue<Customer> shoppingQueue = new LinkedList<Customer>();
 
-        // TODO: create an appropriate data structure for the shoppingQueue
-        //  and add all customers in the supermarket
-
-        for (Customer cust : this.customers) {
-            shoppingQueue.add(cust);
-        }
+        Queue<Customer> shoppingQueue = new PriorityQueue<>(customers);
 
         // all cashiers restart at open time
         for (Cashier c : this.cashiers) {
@@ -172,8 +190,7 @@ public class Supermarket {
         // poll the customers from the queue one by one
         // and redirect them to the cashier of their choice
 
-        // TODO: get the first customer from the shoppingQueue;
-        Customer nextCustomer = shoppingQueue.peek();
+        Customer nextCustomer = shoppingQueue.poll();
 
         while (nextCustomer != null) {
 
@@ -186,7 +203,7 @@ public class Supermarket {
             // redirect the customer to the selected cashier
             selectedCashier.add(nextCustomer);
 
-            // TODO: next customer is arriving, get the next customer from the shoppingQueue
+            nextCustomer = shoppingQueue.poll();
         }
 
         // all customers have been handled;
@@ -360,5 +377,13 @@ public class Supermarket {
         return String.valueOf(1013 + randomDigit) +
                 (char) (randomDigit + 9 * randomChar1 + randomChar2 + 'A') +
                 (char) (randomDigit + 3 * randomChar1 + 7 * randomChar2 + 'D');
+    }
+    // reset the
+    private void resetOverallTimes () {
+        overallAverageCheckoutTime = 0;
+        overallMaxWaitingTime = 0;
+        overallAverageWaitingTime = 0;
+        overallQueueLength = 0;
+        overallIdleTime = 0;
     }
 }

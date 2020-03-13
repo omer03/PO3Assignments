@@ -101,9 +101,7 @@ public class Customer {
         return actualWaitingTime;
     }
 
-    public int getActualCheckOutTime() {
-        return actualCheckOutTime;
-    }
+    public int getActualCheckOutTime() { return actualCheckOutTime; }
 
     public Cashier getCheckOutCashier() {
         return checkOutCashier;

@@ -3,17 +3,14 @@ import java.util.ArrayDeque;
 
 public class FIFOCashier extends Cashier {
 
-    public int checkoutTimePerCustomer;
-    public int checkoutTimePerItem;
+    // The remaining seconds to handle the previous customer
+    protected int remainingTimeHandlingPreviousCustomers;
 
     public FIFOCashier (String name) {
         super(name);
         waitingQueue = new ArrayDeque<>();
         remainingTimeHandlingPreviousCustomers = 0;
     }
-
-    // The remaining seconds to handle the previous customer
-    protected int remainingTimeHandlingPreviousCustomers;
 
     /**
      * calculate the expected nett checkout time of a customer with a given number of items
@@ -24,11 +21,7 @@ public class FIFOCashier extends Cashier {
      */
     @Override
     public int expectedCheckOutTime(int numberOfItems) {
-        if (numberOfItems == 0) {
-            return 0;
-        }
-
-        return checkoutTimePerCustomer + (numberOfItems * checkoutTimePerItem);
+        return numberOfItems > 0 ? numberOfItems * itemScanTime + customerInteractionTime : 0;
     }
 
     /**
@@ -57,11 +50,6 @@ public class FIFOCashier extends Cashier {
         return waitingTime;
     }
 
-
-    @Override
-    public void add(Customer customer) {
-        this.waitingQueue.add(customer);
-    }
 
     /**
      * proceed the cashier's work until the given targetTime has been reached

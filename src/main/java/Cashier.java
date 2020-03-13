@@ -18,6 +18,8 @@ public abstract class Cashier {
     private double totalCheckoutTime;       // total checkout time of the cashier
     private double totalWaitingTime;        // sum of the waiting time of all the customers
     private double maxWaitingTime;          // maximum waiting time for a specific customer
+    protected final int itemScanTime = 2;
+    protected final int customerInteractionTime = 20;
 
 
     protected Cashier(String name) {

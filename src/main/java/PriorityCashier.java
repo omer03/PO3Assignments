@@ -1,11 +1,13 @@
+import java.util.PriorityQueue;
+
 public class PriorityCashier extends FIFOCashier {
 
     private int maxPriorityItems; // the limit to where you can go first in the PriorityCashier waitingQueue
 
     public PriorityCashier(String name, int maxPriorityItems) {
         super(name);
+        waitingQueue = new PriorityQueue<>(new PriorityCashierComparator(maxPriorityItems));
         this.maxPriorityItems = maxPriorityItems;
-        //waitingQueue = new PriorityQueue<>(new PriorityComparator(maxPriorityItems));
     }
 
     @Override
