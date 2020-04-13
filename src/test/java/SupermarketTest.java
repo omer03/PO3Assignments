@@ -133,14 +133,4 @@ class SupermarketTest {
         assertEquals((cashier1.getTotalIdleTime()>cashier2.getTotalIdleTime() ? maxQueueLengthHigh : maxQueueLengthLow),
                 cashier2.getMaxQueueLength());
     }
-
-    @Test
-    void testPrintCustomerStatistics() {
-        supermarket1.printCustomerStatistics();
-    }
-
-    @Test
-    void testPrintSimulationResults() {
-        supermarket1.printSimulationResults();
-    }
 }
