@@ -72,7 +72,7 @@ public class Customer implements Comparable<Customer> {
 
             // Skip the first since that's the default
             for (Cashier cashier : cashiers) {
-                final int waitingTimeAtCashier = cashier.expectedWaitingTime(this);
+                int waitingTimeAtCashier = cashier.expectedWaitingTime(this);
                 if (waitingTimeAtCashier < shortestWaitingTime) {
                     selectedCashier = cashier;
                     shortestWaitingTime = waitingTimeAtCashier;

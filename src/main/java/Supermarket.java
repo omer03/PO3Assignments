@@ -66,8 +66,6 @@ public class Supermarket {
         Map<String, Product> populars = mostBoughtProductByZipCode();
 
 
-        //System.out.printf("\n%s\n%s", revenues.entrySet(), populars.entrySet());
-
         double totalRevenue = 0.0;
         // TODO: display the calculated revenues and most bought products.
         // TODO: calculate the total revenue.
@@ -82,10 +80,6 @@ public class Supermarket {
             totalRevenue += revenue;
             index++;
         }
-
-//        for (Map.Entry<String, Double> entry : revenues.entrySet()) {
-//            totalRevenue += entry.getValue();
-//        }
 
         System.out.printf("\nTotal Revenue=%.2f\n", totalRevenue);
     }
